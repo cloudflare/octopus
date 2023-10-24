@@ -1,0 +1,165 @@
+//
+// Copyright (c) 2023 Cloudflare, Inc.
+//
+// Licensed under Apache 2.0 license found in the LICENSE file
+// or at http://www.apache.org/licenses/LICENSE-2.0
+//
+
+syntax = "proto3";
+
+package cloudflare.net.octopus;
+option go_package = "github.com/cloudflare/octopus/proto/octopus";
+
+// From bio-routing/bio-rd
+import "net/api/net.proto";
+
+/*
+ * Messages for data types
+ */
+message Topology {
+    uint64 timestamp = 1;
+    repeated Site sites = 2;
+    repeated Pop pops = 3;
+    repeated Colo colos = 4;
+    repeated Device devices = 5;
+    repeated Cable cables = 6;
+    repeated Prefix prefixes = 7;
+    repeated Circuit circuits = 8;
+}
+
+message Site {
+    string name = 1;
+}
+
+message Pop {
+    string name = 1;
+}
+
+message Colo {
+    uint32 id = 1;
+	string name = 2;
+	string status = 3; // enum?
+	string region = 4;
+	uint32 tier = 5;
+    string animal = 6;
+	bool is_mcp = 7;
+	bool is_fedramp = 8;
+	string pop = 9;
+	repeated string sites = 10;
+}
+
+message Device {
+    reserved 10;
+
+    string name = 1;
+    string status = 2;
+    string role = 3;
+    string platform = 4;
+
+    int32 colo_id = 5;
+    string site_name = 6;
+
+    repeated Interface interfaces = 7;
+    repeated FrontPort front_ports = 8;
+    repeated RearPort rear_ports = 9;
+
+    string device_type = 11;
+
+    MetaData meta_data = 12;
+}
+
+message Interface {
+    reserved 5;
+
+    string name = 1;
+    repeated InterfaceUnit units = 2;
+    string lag_member_of = 3;
+    string type = 4;
+    MetaData meta_data = 6;
+}
+
+message FrontPort {
+    string name = 1;
+    string rear_port = 2;
+    uint32 rear_port_position = 3;
+}
+
+message RearPort {
+    string name = 1;
+    uint32 positions = 2;
+}
+
+message InterfaceUnit {
+    reserved 4;
+
+    /*
+      The unit ID MAY refer to a VLAN ID if 802.1q or 802.1ad tagging is used (and will contain the same value as the inner_tag is so).
+      For some interface types (GRE tunnels for example), the ID does NOT reflect a VLAN ID.
+     */
+    uint32 id = 1;
+    repeated IPAddress ipv4_addresses = 2;
+    repeated IPAddress ipv6_addresses = 3;
+    uint32 outer_tag = 5;
+    uint32 inner_tag = 6;
+    MetaData meta_data = 7;
+}
+
+message IPAddress {
+    bio.net.Prefix IP = 1;
+    MetaData meta_data = 2;
+}
+
+message Circuit {
+    reserved 5;
+    string cid = 1;
+    string provider = 2;
+    string type = 3;
+    string status = 4;
+
+    MetaData meta_data = 6;
+}
+
+message Cable {
+    CableEnd a_end = 1;
+    CableEnd b_end = 2;
+}
+
+enum CableEndpointType {
+    CABLE_ENDPOINT_TYPE_UNSPECIFIED = 0;
+    CABLE_ENDPOINT_TYPE_INTERFACE = 1;
+    CABLE_ENDPOINT_TYPE_FRONT_PORT = 2;
+    CABLE_ENDPOINT_TYPE_REAR_PORT = 3;
+    CABLE_ENDPOINT_TYPE_CIRCUIT_TERMINATION = 4;
+}
+
+message CableEnd {
+    string device_name = 1;
+    CableEndpointType endpoint_type = 2;
+    string endpoint_name = 3;
+}
+
+message Prefix {
+    reserved 2, 3;
+
+    bio.net.Prefix prefix = 1;
+    MetaData meta_data = 4;
+}
+
+message MetaData {
+    repeated string tags = 1;
+    map<string, string> semantic_tags = 2;
+    string custom_field_data = 3;
+}
+
+/*
+ * Services and related messages
+ */
+message TopologyRequest {}
+
+message TopologyResponse {
+    Topology topology = 1;
+}
+
+service OctopusService {
+    rpc GetTopology(TopologyRequest) returns (TopologyResponse) {}
+}

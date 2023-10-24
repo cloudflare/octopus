@@ -1,0 +1,6 @@
+.cover/
+.vscode
+artifacts
+
+# binaries
+/cmd/octopus/octopus
