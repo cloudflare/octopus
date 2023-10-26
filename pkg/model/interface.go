@@ -85,14 +85,16 @@ func (iface *Interface) ToProto() *octopuspb.Interface {
 
 	protoIface := &octopuspb.Interface{
 		Name:        iface.Name,
-		Units:       make([]*octopuspb.InterfaceUnit, 0),
 		Type:        iface.Type,
 		LagMemberOf: iface.LAGMemberOf,
 		MetaData:    iface.MetaData.ToProto(),
 	}
 
-	for _, unit := range iface.Units {
-		protoIface.Units = append(protoIface.Units, unit.ToProto())
+	if len(iface.Units) > 0 {
+		protoIface.Units = make([]*octopuspb.InterfaceUnit, 0)
+		for _, unit := range iface.Units {
+			protoIface.Units = append(protoIface.Units, unit.ToProto())
+		}
 	}
 
 	return protoIface
@@ -104,20 +106,24 @@ func (unit *InterfaceUnit) ToProto() *octopuspb.InterfaceUnit {
 	}
 
 	protoUnit := &octopuspb.InterfaceUnit{
-		Id:            unit.ID,
-		Ipv4Addresses: make([]*octopuspb.IPAddress, 0),
-		Ipv6Addresses: make([]*octopuspb.IPAddress, 0),
-		MetaData:      unit.MetaData.ToProto(),
-		OuterTag:      uint32(unit.OuterTag),
-		InnerTag:      uint32(unit.InnerTag),
+		Id:       unit.ID,
+		MetaData: unit.MetaData.ToProto(),
+		OuterTag: uint32(unit.OuterTag),
+		InnerTag: uint32(unit.InnerTag),
 	}
 
-	for _, IP := range unit.IPv4Addresses {
-		protoUnit.Ipv4Addresses = append(protoUnit.Ipv4Addresses, IP.ToProto())
+	if len(unit.IPv4Addresses) > 0 {
+		protoUnit.Ipv4Addresses = make([]*octopuspb.IPAddress, 0)
+		for _, IP := range unit.IPv4Addresses {
+			protoUnit.Ipv4Addresses = append(protoUnit.Ipv4Addresses, IP.ToProto())
+		}
 	}
 
-	for _, IP := range unit.IPv6Addresses {
-		protoUnit.Ipv6Addresses = append(protoUnit.Ipv6Addresses, IP.ToProto())
+	if len(unit.IPv6Addresses) > 0 {
+		protoUnit.Ipv6Addresses = make([]*octopuspb.IPAddress, 0)
+		for _, IP := range unit.IPv6Addresses {
+			protoUnit.Ipv6Addresses = append(protoUnit.Ipv6Addresses, IP.ToProto())
+		}
 	}
 
 	return protoUnit

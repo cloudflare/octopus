@@ -101,52 +101,65 @@ func (t *Topology) ToProto() *octopuspb.Topology {
 		return nil
 	}
 
-	topology := &octopuspb.Topology{
+	protoTopology := &octopuspb.Topology{
 		Timestamp: uint64(t.Timestamp.Unix()),
-		Sites:     make([]*octopuspb.Site, 0),
-		Pops:      make([]*octopuspb.Pop, 0),
-		Colos:     make([]*octopuspb.Colo, 0),
 		Devices:   make([]*octopuspb.Device, 0),
-		Cables:    make([]*octopuspb.Cable, 0),
-		Circuits:  make([]*octopuspb.Circuit, 0),
 	}
 
 	for _, dev := range t.Nodes {
-		topology.Devices = append(topology.Devices, dev.ToProto())
+		protoTopology.Devices = append(protoTopology.Devices, dev.ToProto())
 	}
 
-	for _, site := range t.Sites {
-		topology.Sites = append(topology.Sites, site.ToProto())
+	if len(t.Sites) > 0 {
+		protoTopology.Sites = make([]*octopuspb.Site, 0)
+		for _, site := range t.Sites {
+			protoTopology.Sites = append(protoTopology.Sites, site.ToProto())
+		}
 	}
 
-	for _, pop := range t.Pops {
-		topology.Pops = append(topology.Pops, pop.ToProto())
+	if len(t.Pops) > 0 {
+		protoTopology.Pops = make([]*octopuspb.Pop, 0)
+		for _, pop := range t.Pops {
+			protoTopology.Pops = append(protoTopology.Pops, pop.ToProto())
+		}
 	}
 
-	for _, colo := range t.Colos {
-		topology.Colos = append(topology.Colos, colo.ToProto())
+	if len(t.Colos) > 0 {
+		protoTopology.Colos = make([]*octopuspb.Colo, 0)
+		for _, colo := range t.Colos {
+			protoTopology.Colos = append(protoTopology.Colos, colo.ToProto())
+		}
 	}
 
-	for _, cable := range t.Cables {
-		topology.Cables = append(topology.Cables, cable.ToProto())
+	if len(t.Cables) > 0 {
+		protoTopology.Cables = make([]*octopuspb.Cable, 0)
+		for _, cable := range t.Cables {
+			protoTopology.Cables = append(protoTopology.Cables, cable.ToProto())
+		}
 	}
 
-	for _, prefix := range t.Prefixes {
-		topology.Prefixes = append(topology.Prefixes, prefix.ToProto())
+	if len(t.Circuits) > 0 {
+		for _, ckt := range t.Circuits {
+			protoTopology.Circuits = append(protoTopology.Circuits, ckt.ToProto())
+		}
 	}
 
-	for _, ckt := range t.Circuits {
-		topology.Circuits = append(topology.Circuits, ckt.ToProto())
+	if len(t.Prefixes) > 0 {
+		protoTopology.Prefixes = make([]*octopuspb.Prefix, 0)
+		for _, prefix := range t.Prefixes {
+			protoTopology.Prefixes = append(protoTopology.Prefixes, prefix.ToProto())
+		}
 	}
 
-	sortTopology(topology)
-	return topology
+	sortTopology(protoTopology)
+	return protoTopology
 }
 
 func sortTopology(topology *octopuspb.Topology) {
 	sort.Slice(topology.Devices, func(i, j int) bool {
 		return topology.Devices[i].Name < topology.Devices[j].Name
 	})
+
 	for _, d := range topology.Devices {
 		sort.Slice(d.Interfaces, func(i, j int) bool {
 			return d.Interfaces[i].Name < d.Interfaces[j].Name

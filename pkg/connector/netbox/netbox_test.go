@@ -68,18 +68,11 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
 				Devices: []*octopuspb.Device{
 					{
-						Name:       "ccr01.dus01",
-						Role:       "ccr",
-						SiteName:   "DUS01",
-						Interfaces: []*octopuspb.Interface{},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
+						Name:     "ccr01.dus01",
+						Role:     "ccr",
+						SiteName: "DUS01",
 					},
 				},
 			},
@@ -256,10 +249,6 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
 				Devices: []*octopuspb.Device{
 					{
 						Name:     "GCP",
@@ -267,17 +256,14 @@ func TestEnrichment(t *testing.T) {
 						SiteName: "ANY",
 						Interfaces: []*octopuspb.Interface{
 							{
-								Name:  "Interconnect0",
-								Type:  "10gbase-x-sfpp",
-								Units: []*octopuspb.InterfaceUnit{},
+								Name: "Interconnect0",
+								Type: "10gbase-x-sfpp",
 								MetaData: &octopuspb.MetaData{
 									SemanticTags: map[string]string{},
 									Tags:         []string{"net:foo"},
 								},
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 						MetaData: &octopuspb.MetaData{
 							SemanticTags: map[string]string{
 								"NET:ASN": "16550",
@@ -295,10 +281,8 @@ func TestEnrichment(t *testing.T) {
 								Type: "10gbase-x-sfpp",
 								Units: []*octopuspb.InterfaceUnit{
 									{
-										Id:            100,
-										InnerTag:      100,
-										Ipv4Addresses: []*octopuspb.IPAddress{},
-										Ipv6Addresses: []*octopuspb.IPAddress{},
+										Id:       100,
+										InnerTag: 100,
 									},
 								},
 							},
@@ -306,22 +290,17 @@ func TestEnrichment(t *testing.T) {
 								Name:        "Ethernet0/1",
 								Type:        "10gbase-x-sfpp",
 								LagMemberOf: "bond0",
-								Units:       []*octopuspb.InterfaceUnit{},
 							},
 							{
 								Name:        "Ethernet0/2",
 								Type:        "10gbase-x-sfpp",
 								LagMemberOf: "bond0",
-								Units:       []*octopuspb.InterfaceUnit{},
 							},
 							{
-								Name:  "bond0",
-								Type:  "lag",
-								Units: []*octopuspb.InterfaceUnit{},
+								Name: "bond0",
+								Type: "lag",
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 				},
 			},
@@ -452,10 +431,6 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
 				Devices: []*octopuspb.Device{
 					{
 						Name:     "GCP",
@@ -473,7 +448,6 @@ func TestEnrichment(t *testing.T) {
 												IP: bnet.NewPfx(bnet.IPv4FromOctets(192, 0, 2, 0), 31).ToProto(),
 											},
 										},
-										Ipv6Addresses: []*octopuspb.IPAddress{},
 									},
 								},
 								MetaData: &octopuspb.MetaData{
@@ -482,8 +456,6 @@ func TestEnrichment(t *testing.T) {
 								},
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 					{
 						Name:     "ccr01.dus01",
@@ -501,13 +473,10 @@ func TestEnrichment(t *testing.T) {
 												IP: bnet.NewPfx(bnet.IPv4FromOctets(192, 0, 2, 1), 31).ToProto(),
 											},
 										},
-										Ipv6Addresses: []*octopuspb.IPAddress{},
 									},
 									{
-										Id:            100,
-										InnerTag:      100,
-										Ipv4Addresses: []*octopuspb.IPAddress{},
-										Ipv6Addresses: []*octopuspb.IPAddress{},
+										Id:       100,
+										InnerTag: 100,
 									},
 								},
 							},
@@ -515,22 +484,17 @@ func TestEnrichment(t *testing.T) {
 								Name:        "Ethernet0/1",
 								Type:        "10gbase-x-sfpp",
 								LagMemberOf: "bond0",
-								Units:       []*octopuspb.InterfaceUnit{},
 							},
 							{
 								Name:        "Ethernet0/2",
 								Type:        "10gbase-x-sfpp",
 								LagMemberOf: "bond0",
-								Units:       []*octopuspb.InterfaceUnit{},
 							},
 							{
-								Name:  "bond0",
-								Type:  "lag",
-								Units: []*octopuspb.InterfaceUnit{},
+								Name: "bond0",
+								Type: "lag",
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 				},
 			},
@@ -652,40 +616,30 @@ func TestEnrichment(t *testing.T) {
 						Name: "SiteA",
 					},
 				},
-				Pops:  make([]*octopuspb.Pop, 0),
-				Colos: make([]*octopuspb.Colo, 0),
 				Devices: []*octopuspb.Device{
 					{
 						Name:     "devA",
 						SiteName: "SiteA",
 						Interfaces: []*octopuspb.Interface{
 							{
-								Name:  "ifaA",
-								Units: make([]*octopuspb.InterfaceUnit, 0),
+								Name: "ifaA",
 							},
 							{
-								Name:  "ifaX",
-								Units: make([]*octopuspb.InterfaceUnit, 0),
+								Name: "ifaX",
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 					{
 						Name:     "devB",
 						SiteName: "SiteA",
 						Interfaces: []*octopuspb.Interface{
 							{
-								Name:  "ifaB",
-								Units: make([]*octopuspb.InterfaceUnit, 0),
+								Name: "ifaB",
 							},
 							{
-								Name:  "ifaY",
-								Units: make([]*octopuspb.InterfaceUnit, 0),
+								Name: "ifaY",
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 				},
 				Cables: []*octopuspb.Cable{
@@ -796,10 +750,6 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
 				Devices: []*octopuspb.Device{
 					{
 						Name:     "ccr01.dus01",
@@ -827,13 +777,10 @@ func TestEnrichment(t *testing.T) {
 												IP: bnet.NewPfx(bnet.IPv4FromOctets(192, 0, 2, 2), 32).ToProto(),
 											},
 										},
-										Ipv6Addresses: []*octopuspb.IPAddress{},
 									},
 								},
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 				},
 			},
@@ -886,16 +833,11 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
 				Devices: []*octopuspb.Device{
 					{
-						Name:       "pp01.dus01",
-						Role:       "pp",
-						SiteName:   "DUS01",
-						Interfaces: []*octopuspb.Interface{},
+						Name:     "pp01.dus01",
+						Role:     "pp",
+						SiteName: "DUS01",
 						FrontPorts: []*octopuspb.FrontPort{
 							{
 								Name:             "FP-A",
@@ -976,10 +918,7 @@ func TestEnrichment(t *testing.T) {
 						Name: "DUS01",
 					},
 				},
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
+
 				Devices: []*octopuspb.Device{
 					{
 						Name:     "ccr01.dus01",
@@ -998,13 +937,10 @@ func TestEnrichment(t *testing.T) {
 												IP: bnet.NewPfx(bnet.IPv4FromOctets(169, 254, 0, 0), 31).Ptr().ToProto(),
 											},
 										},
-										Ipv6Addresses: make([]*octopuspb.IPAddress, 0),
 									},
 								},
 							},
 						},
-						FrontPorts: []*octopuspb.FrontPort{},
-						RearPorts:  []*octopuspb.RearPort{},
 					},
 				},
 			},
@@ -1039,12 +975,7 @@ func TestEnrichment(t *testing.T) {
 				Prefixes:             make(map[int64]*model.Prefix),
 			},
 			expected: &octopuspb.Topology{
-				Sites:    make([]*octopuspb.Site, 0),
-				Pops:     make([]*octopuspb.Pop, 0),
-				Colos:    make([]*octopuspb.Colo, 0),
-				Cables:   make([]*octopuspb.Cable, 0),
-				Circuits: make([]*octopuspb.Circuit, 0),
-				Devices:  make([]*octopuspb.Device, 0),
+				Devices: make([]*octopuspb.Device, 0),
 				Prefixes: []*octopuspb.Prefix{
 					{
 						Prefix: bnet.NewPfx(bnet.IPv4FromOctets(100, 64, 0, 0), 26).ToProto(),
