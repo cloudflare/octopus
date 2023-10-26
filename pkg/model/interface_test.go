@@ -138,8 +138,7 @@ func TestInterfaceToProto(t *testing.T) {
 			name:  "Empty interface",
 			iface: newInterface("foo"),
 			protoIface: &octopuspb.Interface{
-				Name:  "foo",
-				Units: []*octopuspb.InterfaceUnit{},
+				Name: "foo",
 			},
 		},
 

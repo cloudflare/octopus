@@ -64,10 +64,7 @@ func (d *Device) ToProto() *octopuspb.Device {
 		Platform:   d.Platform,
 		DeviceType: d.DeviceType,
 
-		Interfaces: make([]*octopuspb.Interface, 0),
-		FrontPorts: make([]*octopuspb.FrontPort, 0),
-		RearPorts:  make([]*octopuspb.RearPort, 0),
-		MetaData:   d.MetaData.ToProto(),
+		MetaData: d.MetaData.ToProto(),
 	}
 
 	if d.Colo != nil {
@@ -78,16 +75,25 @@ func (d *Device) ToProto() *octopuspb.Device {
 		protoDev.SiteName = d.Site.Name
 	}
 
-	for _, iface := range d.Interfaces {
-		protoDev.Interfaces = append(protoDev.Interfaces, iface.ToProto())
+	if len(d.Interfaces) > 0 {
+		protoDev.Interfaces = make([]*octopuspb.Interface, 0)
+		for _, iface := range d.Interfaces {
+			protoDev.Interfaces = append(protoDev.Interfaces, iface.ToProto())
+		}
 	}
 
-	for _, fp := range d.FrontPorts {
-		protoDev.FrontPorts = append(protoDev.FrontPorts, fp.ToProto())
+	if len(d.FrontPorts) > 0 {
+		protoDev.FrontPorts = make([]*octopuspb.FrontPort, 0)
+		for _, fp := range d.FrontPorts {
+			protoDev.FrontPorts = append(protoDev.FrontPorts, fp.ToProto())
+		}
 	}
 
-	for _, rp := range d.RearPorts {
-		protoDev.RearPorts = append(protoDev.RearPorts, rp.ToProto())
+	if len(d.RearPorts) > 0 {
+		protoDev.RearPorts = make([]*octopuspb.RearPort, 0)
+		for _, rp := range d.RearPorts {
+			protoDev.RearPorts = append(protoDev.RearPorts, rp.ToProto())
+		}
 	}
 
 	return protoDev

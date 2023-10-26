@@ -129,10 +129,7 @@ func TestDeviceToProto(t *testing.T) {
 			name:   "Empty device",
 			device: NewDevice("foo"),
 			protoDevice: &octopuspb.Device{
-				Name:       "foo",
-				Interfaces: []*octopuspb.Interface{},
-				FrontPorts: make([]*octopuspb.FrontPort, 0),
-				RearPorts:  make([]*octopuspb.RearPort, 0),
+				Name: "foo",
 			},
 		},
 		{
@@ -154,13 +151,10 @@ func TestDeviceToProto(t *testing.T) {
 										},
 									},
 								},
-								Ipv6Addresses: []*octopuspb.IPAddress{},
 							},
 						},
 					},
 				},
-				FrontPorts: make([]*octopuspb.FrontPort, 0),
-				RearPorts:  make([]*octopuspb.RearPort, 0),
 			},
 		},
 	}
