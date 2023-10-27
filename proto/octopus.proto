@@ -160,6 +160,15 @@ message TopologyResponse {
     Topology topology = 1;
 }
 
+message DeviceRequest {
+    string device_name = 1;
+}
+
+message DeviceResponse {
+    Device device = 1;
+}
+
 service OctopusService {
     rpc GetTopology(TopologyRequest) returns (TopologyResponse) {}
+    rpc GetDevice(DeviceRequest) returns (DeviceResponse) {}
 }

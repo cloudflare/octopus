@@ -36,3 +36,18 @@ func (os *ocotopusServer) GetTopology(context.Context, *api.TopologyRequest) (*a
 		Topology: topology.ToProto(),
 	}, nil
 }
+
+func (os *ocotopusServer) GetDevice(context context.Context, deviceRequest *api.DeviceRequest) (*api.DeviceResponse, error) {
+	topology := os.octopus.GetTopology()
+	if topology == nil {
+		return nil, status.New(codes.Unavailable, "Octopus not ready.").Err()
+	}
+
+	if deviceRequest == nil {
+		return nil, status.New(codes.InvalidArgument, "No device_name provided.").Err()
+	}
+
+	return &api.DeviceResponse{
+		Device: topology.GetDevice(deviceRequest.DeviceName).ToProto(),
+	}, nil
+}
