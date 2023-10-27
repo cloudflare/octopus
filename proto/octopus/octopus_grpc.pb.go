@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OctopusServiceClient interface {
 	GetTopology(ctx context.Context, in *TopologyRequest, opts ...grpc.CallOption) (*TopologyResponse, error)
+	GetDevice(ctx context.Context, in *DeviceRequest, opts ...grpc.CallOption) (*DeviceResponse, error)
 }
 
 type octopusServiceClient struct {
@@ -42,11 +43,21 @@ func (c *octopusServiceClient) GetTopology(ctx context.Context, in *TopologyRequ
 	return out, nil
 }
 
+func (c *octopusServiceClient) GetDevice(ctx context.Context, in *DeviceRequest, opts ...grpc.CallOption) (*DeviceResponse, error) {
+	out := new(DeviceResponse)
+	err := c.cc.Invoke(ctx, "/cloudflare.net.octopus.OctopusService/GetDevice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OctopusServiceServer is the server API for OctopusService service.
 // All implementations should embed UnimplementedOctopusServiceServer
 // for forward compatibility
 type OctopusServiceServer interface {
 	GetTopology(context.Context, *TopologyRequest) (*TopologyResponse, error)
+	GetDevice(context.Context, *DeviceRequest) (*DeviceResponse, error)
 }
 
 // UnimplementedOctopusServiceServer should be embedded to have forward compatible implementations.
@@ -55,6 +66,9 @@ type UnimplementedOctopusServiceServer struct {
 
 func (UnimplementedOctopusServiceServer) GetTopology(context.Context, *TopologyRequest) (*TopologyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTopology not implemented")
+}
+func (UnimplementedOctopusServiceServer) GetDevice(context.Context, *DeviceRequest) (*DeviceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDevice not implemented")
 }
 
 // UnsafeOctopusServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -86,6 +100,24 @@ func _OctopusService_GetTopology_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OctopusService_GetDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeviceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OctopusServiceServer).GetDevice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cloudflare.net.octopus.OctopusService/GetDevice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OctopusServiceServer).GetDevice(ctx, req.(*DeviceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OctopusService_ServiceDesc is the grpc.ServiceDesc for OctopusService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -96,6 +128,10 @@ var OctopusService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTopology",
 			Handler:    _OctopusService_GetTopology_Handler,
+		},
+		{
+			MethodName: "GetDevice",
+			Handler:    _OctopusService_GetDevice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
