@@ -26,13 +26,13 @@ Should we just regenerate the Topology on every run (time based, trigger based, 
 
 The Octopus exposes a number of metrics via an HTTP endpoint ready to be scraped by Prometheus.
 
-octopus_topology_update_duration - Time it took to build the topology (milliseconds)
-octopus_topology_build_time - Timestamp (epoch) when the current topology was build
-octopus_topology_item_count - The number of instances per item (broken out bylabel `item_type`)
-octopus_connector_health - Connector health indicatior (0/1) (broken out bylabel `connector`)
-octopus_connector_load_duraton - Timestamp (epoch) when the current connector data was fetched (broken out by label `connector`)
-octopus_connector_load_time - Time it took to fetch data (milliseconds) (broken out by label `connector`)
-octopus_connector_update_error_count - The number of time the refresh of connector data has failed (broken out by label `connector`)
+ * `octopus_topology_update_duration` - Time it took to build the topology (milliseconds)
+ * `octopus_topology_build_time` - Timestamp (epoch) when the current topology was build
+ * `octopus_topology_item_count` - The number of instances per item (broken out bylabel `item_type`)
+ * `octopus_connector_health` - Connector health indicatior (0/1) (broken out bylabel `connector`)
+ * `octopus_connector_load_duraton` - Timestamp (epoch) when the current connector data was fetched (broken out by label `connector`)
+ * `octopus_connector_load_time` - Time it took to fetch data (milliseconds) (broken out by label `connector`)
+ * `octopus_connector_update_error_count` - The number of time the refresh of connector data has failed (broken out by label `connector`)
 
 # Querying data
 
