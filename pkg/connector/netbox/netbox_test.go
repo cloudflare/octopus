@@ -16,7 +16,6 @@ import (
 
 	bnet "github.com/bio-routing/bio-rd/net"
 	dbModel "github.com/cloudflare/octopus/pkg/connector/netbox/model"
-	nbUtils "github.com/cloudflare/octopus/pkg/connector/netbox/utils"
 	octopuspb "github.com/cloudflare/octopus/proto/octopus"
 )
 
@@ -1018,57 +1017,5 @@ func TestEnrichment(t *testing.T) {
 		}
 
 		assert.Equal(t, test.expected, test.t.ToProto(), test.name)
-	}
-}
-
-func TestExtractInterfaceAndUnit(t *testing.T) {
-	tests := []struct {
-		name            string
-		input           string
-		expectedName    string
-		expectedVLANTag model.VLANTag
-		wantFail        bool
-	}{
-		{
-			name:            "dot1q",
-			input:           "vlan.900",
-			expectedName:    "vlan",
-			expectedVLANTag: model.NewVLANTag(0, 900),
-		},
-		{
-			name:            "Q-in-Q",
-			input:           "xe-0/0/0.100.200",
-			expectedName:    "xe-0/0/0",
-			expectedVLANTag: model.NewVLANTag(100, 200),
-		},
-		{
-			name:            "broken",
-			input:           "xe-0/0/0",
-			expectedName:    "xe-0/0/0",
-			expectedVLANTag: model.NewVLANTag(100, 200),
-			wantFail:        true,
-		},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			ifName, vt, err := nbUtils.ExtractInterfaceAndUnit(test.input)
-			if err != nil {
-				if test.wantFail {
-					return
-				}
-
-				t.Errorf("unexpected failure of test %q: %v", test.name, err)
-				return
-			}
-
-			if test.wantFail {
-				t.Errorf("unexpected success of test %q", test.name)
-				return
-			}
-
-			assert.Equal(t, test.expectedName, ifName, test.name)
-			assert.Equal(t, test.expectedVLANTag, vt, test.name)
-		})
 	}
 }

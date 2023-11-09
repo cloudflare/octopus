@@ -85,7 +85,7 @@ func GetCustomFieldData(md *model.MetaData, customFieldData string) {
 
 func GetInterfaceAndVLANTag(name string) (ifName string, vt model.VLANTag, err error) {
 	if isLogicalInterface(name) {
-		return ExtractInterfaceAndUnit(name)
+		return extractInterfaceAndUnit(name)
 	}
 
 	return name, model.VLANTag{}, nil
@@ -95,7 +95,7 @@ func isLogicalInterface(name string) bool {
 	return strings.Contains(name, ".")
 }
 
-func ExtractInterfaceAndUnit(name string) (string, model.VLANTag, error) {
+func extractInterfaceAndUnit(name string) (string, model.VLANTag, error) {
 	extractedVars := reSubMatchMap(ifNameTagsRegexp, name)
 	if _, exists := extractedVars["intf_name"]; !exists {
 		return "", model.VLANTag{}, fmt.Errorf("unable to extract interface name from %q", name)
