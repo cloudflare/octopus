@@ -9,14 +9,13 @@ package netbox
 
 import (
 	"fmt"
-	"regexp"
-	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	dbModel "github.com/cloudflare/octopus/pkg/connector/netbox/model"
+	nbUtils "github.com/cloudflare/octopus/pkg/connector/netbox/utils"
 	"github.com/cloudflare/octopus/pkg/model"
 	"github.com/cloudflare/octopus/proto/octopus"
 
@@ -27,10 +26,6 @@ import (
 const (
 	connectorName  = "Netbox"
 	updateInterval = time.Minute * 2
-)
-
-var (
-	ifNameTagsRegexp = regexp.MustCompile(`^(?P<intf_name>.+?)\.((?P<outer_tag>\d+)\.)?(?P<inner_tag>\d+)$`)
 )
 
 type NetboxConnector struct {
@@ -192,7 +187,7 @@ func (n *NetboxConnector) addDevices(t *model.Topology) error {
 		topoDev.Role = d.DeviceRole.Slug
 		topoDev.DeviceType = d.DeviceType.Slug
 
-		md, err := metaDataFromTags(d.Tags)
+		md, err := nbUtils.GetMetaDataFromTags(d.Tags)
 		if err != nil {
 			return fmt.Errorf("unable to get meta data: %v", err)
 		}
@@ -218,7 +213,7 @@ func (n *NetboxConnector) addInterfaces(t *model.Topology) error {
 		t.DevicesByInterfaceID[nbIfa.ID] = d
 		t.Interfaces[nbIfa.ID] = ifa
 
-		md, err := metaDataFromTags(nbIfa.Tags)
+		md, err := nbUtils.GetMetaDataFromTags(nbIfa.Tags)
 		if err != nil {
 			return fmt.Errorf("unable to get meta data: %v", err)
 		}
@@ -255,15 +250,15 @@ func (n *NetboxConnector) addInterfaceUnits(t *model.Topology) error {
 			return fmt.Errorf("can not find interface %s:%s", nbIfa.Device.Name, nbIfa.Parent.Name)
 		}
 
-		vlanTag, err := parseUnitStr(unitStr)
+		vlanTag, err := nbUtils.ParseUnitStr(unitStr)
 		if err != nil {
-			return fmt.Errorf("Unable to convert unit %q (id=%d) (interface %q) to int for %s:%s. Ignoring logical interface.", unitStr, nbIfa.ID, nbIfa.Name, nbIfa.Device.Name, nbIfa.Parent.Name)
+			return fmt.Errorf("unable to convert unit %q (id=%d) (interface %q) to int for %s:%s. Ignoring logical interface", unitStr, nbIfa.ID, nbIfa.Name, nbIfa.Device.Name, nbIfa.Parent.Name)
 		}
 
 		u := ifa.AddUnitIfNotExists(vlanTag)
 		t.DevicesByInterfaceID[nbIfa.ID] = d
 
-		md, err := metaDataFromTags(nbIfa.Tags)
+		md, err := nbUtils.GetMetaDataFromTags(nbIfa.Tags)
 		if err != nil {
 			return fmt.Errorf("unable to get meta data: %v", err)
 		}
@@ -272,34 +267,6 @@ func (n *NetboxConnector) addInterfaceUnits(t *model.Topology) error {
 	}
 
 	return nil
-}
-
-func parseUnitStr(unitStr string) (model.VLANTag, error) {
-	if strings.Contains(unitStr, ".") {
-		parts := strings.Split(unitStr, ".")
-		if len(parts) != 2 {
-			return model.VLANTag{}, fmt.Errorf("invalid unit string %q", unitStr)
-		}
-
-		outerTag, err := strconv.Atoi(parts[0])
-		if err != nil {
-			return model.VLANTag{}, fmt.Errorf("unable to convert %q to int: %v", parts[0], err)
-		}
-
-		innerTag, err := strconv.Atoi(parts[1])
-		if err != nil {
-			return model.VLANTag{}, fmt.Errorf("unable to convert %q to int: %v", parts[1], err)
-		}
-
-		return model.NewVLANTag(uint16(outerTag), uint16(innerTag)), nil
-	}
-
-	ctag, err := strconv.Atoi(unitStr)
-	if err != nil {
-		return model.VLANTag{}, fmt.Errorf("unable to convert %q to int: %v", unitStr, err)
-	}
-
-	return model.NewVLANTag(0, uint16(ctag)), nil
 }
 
 func (n *NetboxConnector) addIPAddresses(t *model.Topology) error {
@@ -323,18 +290,18 @@ func (n *NetboxConnector) addIPAddresses(t *model.Topology) error {
 			return fmt.Errorf("interface with id %d not found", ifaID)
 		}
 
-		_, vt, err := getInterfaceAndVLANTag(dcimIfa.Name)
+		_, vt, err := nbUtils.GetInterfaceAndVLANTag(dcimIfa.Name)
 		if err != nil {
 			return fmt.Errorf("unable to extract interface name and unit from %q: %v", dcimIfa.Name, err)
 		}
 
-		pfx, err := bnet.PrefixFromString(sanitizeIPAddress(nbIP.Address))
+		pfx, err := bnet.PrefixFromString(nbUtils.SanitizeIPAddress(nbIP.Address))
 		if err != nil {
 			return fmt.Errorf("failed to parse IP %q: %v", nbIP.Address, err)
 		}
 
 		ip := model.NewIP(*pfx)
-		getCustomFieldData(ip.MetaData, nbIP.CustomFieldData)
+		nbUtils.GetCustomFieldData(ip.MetaData, nbIP.CustomFieldData)
 
 		u := ifa.AddUnitIfNotExists(vt)
 		if pfx.Addr().IsIPv4() {
@@ -347,18 +314,6 @@ func (n *NetboxConnector) addIPAddresses(t *model.Topology) error {
 	return nil
 }
 
-func sanitizeIPAddress(addr string) string {
-	if strings.Contains(addr, "/") {
-		return addr
-	}
-
-	if strings.Contains(addr, ".") {
-		return addr + "/32"
-	}
-
-	return addr + "/128"
-}
-
 func (n *NetboxConnector) addPrefixes(t *model.Topology) error {
 	for _, p := range n.prefixes {
 		pfx, err := bnet.PrefixFromString(p.Prefix)
@@ -366,7 +321,7 @@ func (n *NetboxConnector) addPrefixes(t *model.Topology) error {
 			return fmt.Errorf("failed to parse Prefix %q: %v", p.Prefix, err)
 		}
 
-		md, err := metaDataFromTags(p.Tags)
+		md, err := nbUtils.GetMetaDataFromTags(p.Tags)
 		if err != nil {
 			return fmt.Errorf("failed to get Tags for Prefix %q: %v", p.Prefix, err)
 		}
@@ -378,36 +333,6 @@ func (n *NetboxConnector) addPrefixes(t *model.Topology) error {
 	}
 
 	return nil
-}
-
-func metaDataFromTags(tags []string) (*model.MetaData, error) {
-	ret := model.NewMetaData()
-	for _, tag := range tags {
-		parts := strings.Split(tag, "=")
-
-		// Semantic Tag
-		if len(parts) == 2 {
-			if _, exists := ret.SemanticTags[parts[0]]; exists {
-				return nil, fmt.Errorf("Key %q exists already: %q vs. %q", parts[0], ret.SemanticTags[parts[0]], parts[1])
-			}
-
-			ret.SemanticTags[parts[0]] = parts[1]
-
-		} else {
-			// Regular Tag
-			ret.Tags = append(ret.Tags, tag)
-		}
-	}
-
-	return ret, nil
-}
-
-func getCustomFieldData(md *model.MetaData, customFieldData string) {
-	if customFieldData == "" || customFieldData == "{}" {
-		return
-	}
-
-	md.CustomFieldData = customFieldData
 }
 
 func (n *NetboxConnector) getCableEnd(terminationType int32, terminationID int64, t *model.Topology) (*model.CableEnd, error) {
@@ -483,7 +408,7 @@ func (n *NetboxConnector) getCableEnd(terminationType int32, terminationID int64
 
 	default:
 		// consoleport, consoleserverport, powerport, or poweroutlet
-		return nil, fmt.Errorf("Don't know what to do with cable termination ID %d (type %d)", terminationID, terminationType)
+		return nil, fmt.Errorf("don't know what to do with cable termination ID %d (type %d)", terminationID, terminationType)
 	}
 
 	return &ce, nil
@@ -528,7 +453,7 @@ func (n *NetboxConnector) addRearPorts(t *model.Topology) error {
 	for _, rp := range n.rearPorts {
 		nbDev := n.devices[rp.DeviceID]
 		if nbDev == nil {
-			return fmt.Errorf("Device %d not found", rp.DeviceID)
+			return fmt.Errorf("device %d not found", rp.DeviceID)
 		}
 
 		d := t.GetDevice(nbDev.Name)
@@ -549,7 +474,7 @@ func (n *NetboxConnector) addFrontPorts(t *model.Topology) error {
 	for _, fp := range n.frontPorts {
 		nbDev := n.devices[fp.DeviceID]
 		if nbDev == nil {
-			return fmt.Errorf("Device %d not found", fp.DeviceID)
+			return fmt.Errorf("device %d not found", fp.DeviceID)
 		}
 
 		d := t.GetDevice(nbDev.Name)
@@ -571,62 +496,6 @@ func (n *NetboxConnector) addFrontPorts(t *model.Topology) error {
 	}
 
 	return nil
-}
-
-func getInterfaceAndVLANTag(name string) (ifName string, vt model.VLANTag, err error) {
-	if isLogicalInterface(name) {
-		return extractInterfaceAndUnit(name)
-	}
-
-	return name, model.VLANTag{}, nil
-}
-
-func isLogicalInterface(name string) bool {
-	return strings.Contains(name, ".")
-}
-
-func extractInterfaceAndUnit(name string) (string, model.VLANTag, error) {
-	extractedVars := reSubMatchMap(ifNameTagsRegexp, name)
-	if _, exists := extractedVars["intf_name"]; !exists {
-		return "", model.VLANTag{}, fmt.Errorf("unable to extract interface name from %q", name)
-	}
-
-	if _, exists := extractedVars["inner_tag"]; !exists {
-		return "", model.VLANTag{}, fmt.Errorf("unable to extract inner tag from %q", name)
-	}
-
-	innerTag, err := strconv.Atoi(extractedVars["inner_tag"])
-	if err != nil {
-		return "", model.VLANTag{}, fmt.Errorf("unable to convert inner tag from string %q to int (%q)", extractedVars["inner_tag"], name)
-	}
-
-	vt := model.VLANTag{
-		InnerTag: uint16(innerTag),
-	}
-
-	outerTagStr := extractedVars["outer_tag"]
-	if outerTagStr != "" {
-		outerTag, err := strconv.Atoi(outerTagStr)
-		if err != nil {
-			return "", model.VLANTag{}, fmt.Errorf("unable to convert outer tag from string %q to int (%q)", outerTagStr, name)
-		}
-
-		vt.OuterTag = uint16(outerTag)
-	}
-
-	return extractedVars["intf_name"], vt, nil
-}
-
-func reSubMatchMap(r *regexp.Regexp, str string) map[string]string {
-	match := r.FindStringSubmatch(str)
-	subMatchMap := make(map[string]string)
-	for i, name := range r.SubexpNames() {
-		if i != 0 && name != "" && i <= len(match) {
-			subMatchMap[name] = match[i]
-		}
-	}
-
-	return subMatchMap
 }
 
 func (n *NetboxConnector) StartRefreshRoutine() {

@@ -16,6 +16,7 @@ import (
 
 	bnet "github.com/bio-routing/bio-rd/net"
 	dbModel "github.com/cloudflare/octopus/pkg/connector/netbox/model"
+	nbUtils "github.com/cloudflare/octopus/pkg/connector/netbox/utils"
 	octopuspb "github.com/cloudflare/octopus/proto/octopus"
 )
 
@@ -1051,7 +1052,7 @@ func TestExtractInterfaceAndUnit(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ifName, vt, err := extractInterfaceAndUnit(test.input)
+			ifName, vt, err := nbUtils.ExtractInterfaceAndUnit(test.input)
 			if err != nil {
 				if test.wantFail {
 					return
