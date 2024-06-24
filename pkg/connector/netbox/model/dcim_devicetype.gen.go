@@ -8,21 +8,26 @@ const TableNameDcimDevicetype = "dcim_devicetype"
 
 // DcimDevicetype mapped from table <dcim_devicetype>
 type DcimDevicetype struct {
-//	Created         time.Time `gorm:"column:created" json:"created"`
-//	LastUpdated     time.Time `gorm:"column:last_updated" json:"last_updated"`
-//	CustomFieldData string    `gorm:"column:custom_field_data;not null" json:"custom_field_data"`
-	ID              int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Model           string    `gorm:"column:model;not null" json:"model"`
-	Slug            string    `gorm:"column:slug;not null" json:"slug"`
-//	PartNumber      string    `gorm:"column:part_number;not null" json:"part_number"`
-//	UHeight         int16     `gorm:"column:u_height;not null" json:"u_height"`
-//	IsFullDepth     bool      `gorm:"column:is_full_depth;not null" json:"is_full_depth"`
-//	SubdeviceRole   string    `gorm:"column:subdevice_role;not null" json:"subdevice_role"`
-//	FrontImage      string    `gorm:"column:front_image;not null" json:"front_image"`
-//	RearImage       string    `gorm:"column:rear_image;not null" json:"rear_image"`
-//	Comments        string    `gorm:"column:comments;not null" json:"comments"`
-	ManufacturerID  int64     `gorm:"column:manufacturer_id;not null" json:"manufacturer_id"`
-//	Airflow         string    `gorm:"column:airflow;not null" json:"airflow"`
+	ID                int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Model             string    `gorm:"column:model;not null" json:"model"`
+	Slug              string    `gorm:"column:slug;not null" json:"slug"`
+	//	UHeight           float64   `gorm:"column:u_height;not null" json:"u_height"`
+	//	IsFullDepth       bool      `gorm:"column:is_full_depth;not null" json:"is_full_depth"`
+	ManufacturerID    int64     `gorm:"column:manufacturer_id;not null" json:"manufacturer_id"`
+	// SubdeviceRole     string    `gorm:"column:subdevice_role;not null" json:"subdevice_role"`
+	// PartNumber        string    `gorm:"column:part_number;not null" json:"part_number"`
+	// Comments          string    `gorm:"column:comments;not null" json:"comments"`
+	// Created           time.Time `gorm:"column:created" json:"created"`
+	// LastUpdated       time.Time `gorm:"column:last_updated" json:"last_updated"`
+	// FrontImage        string    `gorm:"column:front_image;not null" json:"front_image"`
+	// RearImage         string    `gorm:"column:rear_image;not null" json:"rear_image"`
+	// CustomFieldData   string    `gorm:"column:custom_field_data;not null" json:"custom_field_data"`
+	// Airflow           string    `gorm:"column:airflow;not null" json:"airflow"`
+	// Weight            float64   `gorm:"column:weight" json:"weight"`
+	// WeightUnit        string    `gorm:"column:weight_unit;not null" json:"weight_unit"`
+	// AbsWeight         int64     `gorm:"column:_abs_weight" json:"_abs_weight"`
+	// Description       string    `gorm:"column:description;not null" json:"description"`
+	// DefaultPlatformID int64     `gorm:"column:default_platform_id" json:"default_platform_id"`
 }
 
 // TableName DcimDevicetype's table name
