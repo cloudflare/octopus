@@ -505,36 +505,66 @@ func TestEnrichment(t *testing.T) {
 				client: apiClient,
 				cables: []*dbModel.DcimCable{
 					{
-						TerminationATypeID: 2,
-						TerminationBTypeID: 2,
-						TerminationAID:     42,
-						TerminationBID:     23,
+						Terminations: []*dbModel.DcimCabletermination{
+							{
+								TerminationID:     42,
+								TerminationTypeID: 2,
+							},
+							{
+								TerminationID:     23,
+								TerminationTypeID: 2,
+							},
+						},
 					},
 					{
-						TerminationATypeID: 2,
-						TerminationBTypeID: 5,
-						TerminationAID:     98,
-						TerminationBID:     1, // circuit termination
+						Terminations: []*dbModel.DcimCabletermination{
+							{
+								TerminationID:     98,
+								TerminationTypeID: 2,
+							},
+							{
+								TerminationID:     1, // circuit termination
+								TerminationTypeID: 5,
+							},
+						},
 					},
 					{
-						TerminationATypeID: 2,
-						TerminationBTypeID: 5,
-						TerminationAID:     99,
-						TerminationBID:     2, // circuit termination
+						Terminations: []*dbModel.DcimCabletermination{
+							{
+								TerminationID:     99,
+								TerminationTypeID: 2,
+							},
+							{
+								TerminationID:     2, // circuit termination
+								TerminationTypeID: 5,
+							},
+						},
 					},
 
 					// Cable with unknown termination type, e.g. serial or power cables, which are ignored for now
 					{
-						TerminationATypeID: 99,
-						TerminationBTypeID: 5,
-						TerminationAID:     99,
-						TerminationBID:     2,
+						Terminations: []*dbModel.DcimCabletermination{
+							{
+								TerminationID:     99,
+								TerminationTypeID: 99,
+							},
+							{
+								TerminationID:     2,
+								TerminationTypeID: 5,
+							},
+						},
 					},
 					{
-						TerminationATypeID: 1,
-						TerminationBTypeID: 99,
-						TerminationAID:     99,
-						TerminationBID:     2,
+						Terminations: []*dbModel.DcimCabletermination{
+							{
+								TerminationID:     99,
+								TerminationTypeID: 1,
+							},
+							{
+								TerminationID:     2,
+								TerminationTypeID: 99,
+							},
+						},
 					},
 				},
 				circuits: map[int64]*dbModel.CircuitsCircuit{

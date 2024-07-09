@@ -416,16 +416,24 @@ func (n *NetboxConnector) getCableEnd(terminationType int32, terminationID int64
 
 func (n *NetboxConnector) addCables(t *model.Topology) error {
 	for _, c := range n.cables {
-		if c.TerminationAID == 0 || c.TerminationBID == 0 {
+		// For now, all terminations should have exactly 2 ends.
+		if len(c.Terminations) != 2 {
 			continue
 		}
 
-		AEnd, err := n.getCableEnd(c.TerminationATypeID, c.TerminationAID, t)
+		termination_a := c.Terminations[0]
+		termination_b := c.Terminations[1]
+
+		if termination_a.TerminationID == 0 || termination_b.TerminationID == 0 {
+			continue
+		}
+
+		AEnd, err := n.getCableEnd(termination_a.TerminationTypeID, termination_a.TerminationID, t)
 		if err != nil {
 			continue
 		}
 
-		BEnd, err := n.getCableEnd(c.TerminationBTypeID, c.TerminationBID, t)
+		BEnd, err := n.getCableEnd(termination_b.TerminationTypeID, termination_b.TerminationID, t)
 		if err != nil {
 			continue
 		}

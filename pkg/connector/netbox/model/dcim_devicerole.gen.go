@@ -8,15 +8,16 @@ const TableNameDcimDevicerole = "dcim_devicerole"
 
 // DcimDevicerole mapped from table <dcim_devicerole>
 type DcimDevicerole struct {
-//	Created         time.Time `gorm:"column:created" json:"created"`
-//	LastUpdated     time.Time `gorm:"column:last_updated" json:"last_updated"`
-//	CustomFieldData string    `gorm:"column:custom_field_data;not null" json:"custom_field_data"`
-	ID              int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Name            string    `gorm:"column:name;not null" json:"name"`
-	Slug            string    `gorm:"column:slug;not null" json:"slug"`
-//	Color           string    `gorm:"column:color;not null" json:"color"`
-//	VMRole          bool      `gorm:"column:vm_role;not null" json:"vm_role"`
-//	Description     string    `gorm:"column:description;not null" json:"description"`
+	ID               int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	Name             string    `gorm:"column:name;not null" json:"name"`
+	Slug             string    `gorm:"column:slug;not null" json:"slug"`
+	// Color            string    `gorm:"column:color;not null" json:"color"`
+	// VMRole           bool      `gorm:"column:vm_role;not null" json:"vm_role"`
+	// Created          time.Time `gorm:"column:created" json:"created"`
+	// LastUpdated      time.Time `gorm:"column:last_updated" json:"last_updated"`
+	// Description      string    `gorm:"column:description;not null" json:"description"`
+	// CustomFieldData  string    `gorm:"column:custom_field_data;not null" json:"custom_field_data"`
+	// ConfigTemplateID int64     `gorm:"column:config_template_id" json:"config_template_id"`
 }
 
 // TableName DcimDevicerole's table name

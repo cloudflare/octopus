@@ -276,7 +276,7 @@ func (db *database) getTags(contentTypeID uint) ([]model.ExtrasTaggeditem, error
 	tagsMapping := make([]model.ExtrasTaggeditem, 0)
 	err := db.pgdb.Model(&tagsMapping).Relation("Tag").Where("content_type_id = ?", contentTypeID).Select()
 	if err != nil {
-		return nil, fmt.Errorf("Select failed: %v", err)
+		return nil, fmt.Errorf("select failed: %v", err)
 	}
 
 	return tagsMapping, nil
