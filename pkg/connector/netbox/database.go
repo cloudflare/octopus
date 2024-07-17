@@ -173,7 +173,7 @@ func (db *database) getIPAddresses() ([]*model.IpamIpaddress, error) {
 func (db *database) getCables() ([]*model.DcimCable, error) {
 	cables := make([]*model.DcimCable, 0)
 
-	err := db.pgdb.Model(&cables).Select()
+	err := db.pgdb.Model(&cables).Relation("Terminations").Select()
 	if err != nil {
 		return nil, fmt.Errorf("select failed: %v", err)
 	}
