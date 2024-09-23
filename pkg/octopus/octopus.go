@@ -17,6 +17,8 @@ import (
 	"github.com/cloudflare/octopus/pkg/connector"
 	"github.com/cloudflare/octopus/pkg/model"
 	octopuspb "github.com/cloudflare/octopus/proto/octopus"
+	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -131,8 +133,17 @@ func (o *Octopus) serveGrpc() {
 	log.Infof("Starting gRPC API server at %s", portStr)
 
 	os := newOctopusServer(o)
-	s := grpc.NewServer()
+
+	srvMetrics := grpcprom.NewServerMetrics()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(srvMetrics.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(srvMetrics.StreamServerInterceptor()),
+	)
 	s.RegisterService(&octopuspb.OctopusService_ServiceDesc, os)
+
+	// Register Prometheus metrics
+	srvMetrics.InitializeMetrics(s)
+	prometheus.MustRegister(srvMetrics)
 
 	// Allow client to retrieve proto definition
 	reflection.Register(s)

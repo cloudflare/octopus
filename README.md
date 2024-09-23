@@ -34,6 +34,8 @@ The Octopus exposes a number of metrics via an HTTP endpoint ready to be scraped
  * `octopus_connector_load_time` - Time it took to fetch data (milliseconds) (broken out by label `connector`)
  * `octopus_connector_update_error_count` - The number of time the refresh of connector data has failed (broken out by label `connector`)
 
+ Other than those, Octopus is exposing gRPC-related metrics that comes from [go-grpc-middleware](https://github.com/grpc-ecosystem/go-grpc-middleware/tree/main/providers/prometheus).
+
 # Querying data
 
 The Octopus exposes a gRPC API to query the enriched topology data.
