@@ -252,7 +252,9 @@ func (n *NetboxConnector) addInterfaceUnits(t *model.Topology) error {
 
 		vlanTag, err := nbUtils.ParseUnitStr(unitStr)
 		if err != nil {
-			return fmt.Errorf("unable to convert unit %q (id=%d) (interface %q) to int for %s:%s. Ignoring logical interface", unitStr, nbIfa.ID, nbIfa.Name, nbIfa.Device.Name, nbIfa.Parent.Name)
+			// In this case the interface name is not following the convention `<parent_interface_name>.<unit>` (e.g., ending with ".").
+			// So we ignore it.
+			log.Warnf("unable to convert unit %q (id=%d) (interface %q) to int for %s:%s. Ignoring.", unitStr, nbIfa.ID, nbIfa.Name, nbIfa.Device.Name, nbIfa.Parent.Name)
 		}
 
 		u := ifa.AddUnitIfNotExists(vlanTag)
